@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+
+  web_app:
+    build: .
+    container_name: web_app
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - src/.env
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./src:/app"
+    depends_on:
+      - postgres_db
+      - redis_db
+
+  postgres_db:
+    image: postgres:16
+    container_name: postgres_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=aksiyamix_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=javokh.007
+
+  redis_db:
+    image: redis:7.0.15
+    container_name: redis_db
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  celery_worker:
+    build: .
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - ./src:/app
+    depends_on:
+      - redis_db
+
+  celery_beat:
+    build: .
+    command: celery -A config beat --loglevel=info
+    volumes:
+      - ./src:/app
+    depends_on:
+      - redis_db
+      - celery_worker
+
+volumes:
+  postgres_data:
+  redis_data:
+
+
+
+
+
+
