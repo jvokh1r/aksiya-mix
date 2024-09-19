@@ -7,7 +7,7 @@ services:
     container_name: web_app
     command: python manage.py runserver 0.0.0.0:8000
     env_file:
-      - src/.env
+      - .env
     environment:
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
