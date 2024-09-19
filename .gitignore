@@ -89,7 +89,7 @@ Pipfile.lock
 __pycache__/
 local_settings.py
 
-src/.env
+.env/
 db.sqlite3
 
 
